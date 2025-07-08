@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Map Click Game</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #mapContainer {
+      position: relative;
+      width: 680px;
+      height: 680px;
+      background-image: url('images/ic1.png');
+      background-size: cover;
+      border: 2px solid #333;
+    }
+
+
+
+    .region {
+      position: absolute;
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    #sidebar {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      width: 200px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    }
+
+    #visitedList {
+      margin-bottom: 10px;
+    }
+
+    #points,
+    #time {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    #level {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Map Click Game</h2>
+  <div style="position: relative; display: flex;">
+    <div id="mapContainer">
+      <canvas id="pathCanvas" width="680" height="680"></canvas>
+      <canvas id="stormCanvas" width="680" height="680"></canvas>
+      <div class="region" data-name="Region 1" style="left: 252px; top: 110px; width: 50px; height: 30px;"> </div>
+      <div class="region" data-name="Region 2" style="left: 141px; top: 170px; width: 50px; height: 38px;"> </div>
+      <div class="region" data-name="Region 3" style="left: 458px; top: 125px; width: 51px; height: 42px;"> </div>
+      <div class="region" data-name="Region 4" style="left: 403px; top: 181px; width: 54px; height: 37px;"> </div>
+      <div class="region" data-name="Region 5" style="left: 263px; top: 189px; width: 47px; height: 33px;"> </div>
+      <div class="region" data-name="Region 6" style="left: 176px; top: 281px; width: 56px; height: 37px;"> </div>
+      <div class="region" data-name="Region 7" style="left: 376px; top: 267px; width: 42px; height: 32px;"> </div>
+      <div class="region" data-name="Region 8" style="left: 499px; top: 269px; width: 54px; height: 32px;"> </div>
+      <div class="region" data-name="Region 9" style="left: 422px; top: 292px; width: 59px; height: 36px;"> </div>
+      <div class="region" data-name="Region 10" style="left: 198px; top: 349px; width: 56px; height: 36px;"> </div>
+      <div class="region" data-name="Region 11" style="left: 286px; top: 336px; width: 64px; height: 51px;"> </div>
+      <div class="region" data-name="Region 12" style="left: 395px; top: 374px; width: 67px; height: 40px;"> </div>
+      <div class="region" data-name="Region 13" style="left: 477px; top: 403px; width: 62px; height: 37px;"> </div>
+      <div class="region" data-name="Region 14" style="left: 172px; top: 412px; width: 51px; height: 38px;"> </div>
+      <div class="region" data-name="Region 15" style="left: 387px; top: 438px; width: 59px; height: 38px;"> </div>
+      <div class="region" data-name="Region 16" style="left: 249px; top: 504px; width: 58px; height: 34px;"> </div>
+      <div class="region" data-name="Region 17" style="left: 472px; top: 471px; width: 62px; height: 39px;"> </div>
+      <div class="region" data-name="Region 18" style="left: 128px; top: 453px; width: 36px; height: 38px;"> </div>
+      <div class="region" data-name="Region 19" style="left: 297px; top: 443px; width: 33px; height: 38px;"> </div>
+      <div class="region" data-name="Region 20" style="left: 240px; top: 252px; width: 26px; height: 32px;"> </div>
+      <div class="region" data-name="Region 21" style="left: 361px; top: 396px; width: 30px; height: 52px;"> </div>
+      <div class="region" data-name="Region 22" style="left: 374px; top: 514px; width: 31px; height: 36px;"> </div>
+      <div class="region" data-name="Region 23" style="left: 409px; top: 497px; width: 25px; height: 20px;"> </div>
+      <div class="region" data-name="Region 24" style="left: 229px; top: 409px; width: 27px; height: 23px;"> </div>
+      <div class="region" data-name="Region 25" style="left: 521px; top: 315px; width: 25px; height: 25px;"> </div>
+      <div class="region" data-name="Region 26" style="left: 418px; top: 235px; width: 22px; height: 23px;"> </div>
+      <div class="region" data-name="Region 27" style="left: 292px; top: 242px; width: 29px; height: 32px;"> </div>
+      <div class="region" data-name="Region 28" style="left: 112px; top: 199px; width: 24px; height: 30px;"> </div>
+      <div class="region" data-name="Region 29" style="left: 316px; top: 122px; width: 29px; height: 28px;"> </div>
+      <div class="region" data-name="Region 30" style="left: 435px; top: 483px; width: 21px; height: 19px;"> </div>
+      <div class="region" data-name="Region 31" style="left: 329px; top: 446px; width: 20px; height: 18px;"> </div>
+      <div class="region" data-name="Region 32" style="left: 219px; top: 268px; width: 24px; height: 20px;"> </div>
+      <div class="region" data-name="Region 33" style="left: 410px; top: 221px; width: 20px; height: 16px;"> </div>
+      <div class="region" data-name="Region 34" style="left: 329px; top: 199px; width: 20px; height: 17px;"> </div>
+      <div class="region" data-name="Region 35" style="left: 309px; top: 210px; width: 22px; height: 16px;"> </div>
+      <div class="region" data-name="Region 36" style="left: 145px; top: 222px; width: 27px; height: 33px;"> </div>
+      <div class="region" data-name="Region 37" style="left: 356px; top: 133px; width: 23px; height: 37px;"> </div>
+      <div class="region" data-name="Region 38" style="left: 514px; top: 223px; width: 24px; height: 31px;"> </div>
+      <div class="region" data-name="Region 39" style="left: 133px; top: 347px; width: 29px; height: 42px;"> </div>
+      <div class="region" data-name="Region 40" style="left: 457px; top: 230px; width: 28px; height: 32px;"> </div>
+      <div class="region" data-name="Region 41" style="left: 532px; top: 366px; width: 24px; height: 44px;"> </div>
+      <div class="region" data-name="Region 42" style="left: 517px; top: 379px; width: 16px; height: 15px;"> </div>
+      <div class="region" data-name="Region 43" style="left: 372px; top: 485px; width: 17px; height: 18px;"> </div>
+      <div class="region" data-name="Region 44" style="left: 334px; top: 464px; width: 16px; height: 15px;"> </div>
+      <div class="region" data-name="Region 45" style="left: 359px; top: 433px; width: 18px; height: 16px;"> </div>
+      <div class="region" data-name="Region 46" style="left: 154px; top: 438px; width: 16px; height: 15px;"> </div>
+      <div class="region" data-name="Region 47" style="left: 384px; top: 338px; width: 20px; height: 19px;"> </div>
+      <div class="region" data-name="Region 48" style="left: 301px; top: 309px; width: 20px; height: 16px;"> </div>
+      <div class="region" data-name="Region 49" style="left: 152px; top: 348px; width: 17px; height: 15px;"> </div>
+      <div class="region" data-name="Region 50" style="left: 491px; top: 237px; width: 14px; height: 18px;"> </div>
+      <div class="region" data-name="Region 51" style="left: 436px; top: 259px; width: 19px; height: 17px;"> </div>
+      <div class="region" data-name="Region 52" style="left: 249px; top: 244px; width: 17px; height: 16px;"> </div>
+      <div class="region" data-name="Region 53" style="left: 172px; top: 229px; width: 15px; height: 16px;"> </div>
+      <div class="region" data-name="Region 54" style="left: 346px; top: 163px; width: 18px; height: 15px;"> </div>
+
+    </div>
+    <div id="sidebar">
+      <div id="time">Time: 0.5 min</div>
+      <div id="level">Level: 2</div>
+      <div id="visitedList">
+        <h3>Visited Regions:</h3>
+        <ol id="regionList"></ol>
+      </div>
+      <div id="points">Points: 0</div>
+    </div>
+  </div>
+
+  <script>
+    const regions = document.querySelectorAll('.region');
+    const regionList = document.getElementById('regionList');
+    const pointsDisplay = document.getElementById('points');
+    const timeDisplay = document.getElementById('time');
+    const levelDisplay = document.getElementById('level');
+    const canvas = document.getElementById('pathCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const stormCanvas = document.getElementById('stormCanvas');
+    const stormCtx = stormCanvas.getContext('2d');
+
+    const stormOpacity = 0.5;
+
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+    let originalCenter = { x: canvasWidth / 2 - 5.0, y: canvasHeight / 2 - 5.0 };
+    let originalRadius = canvasWidth / 2.275;
+
+    let stormCenter = { x: canvasWidth / 2 - 5.0, y: canvasHeight / 2 - 5.0 };
+    let stormCenter1 = { x: canvasWidth / 2 - 5.0, y: canvasHeight / 2 - 5.0 };
+    let stormCenter2 = { x: canvasWidth / 2 - 5.0, y: canvasHeight / 2 - 5.0 };
+    let stormRadius = canvasWidth / 2.275;
+    let stormRadius1 = 0.5255 * originalRadius;
+    let stormRadius2 = 0.0554 * originalRadius;
+
+
+    const vp = 1 / (0.7 * stormRadius); // travel time per pixel (minutes)
+
+    let visited = [];
+    let visitedNames = new Set();
+    let totalPoints = 0;
+    let totalTime = 0.5;
+    let stormCenterUpdated = false;
+    let stormCenterUpdated2 = false;
+
+    let level = 2;
+
+    let v1 = { x: 0, y: 0 };
+
+
+    function drawStormOverlay() {
+      const t1 = 4.5;
+      const t2 = 7.5;
+      const t3 = 11.0;
+      const t4 = 14.0;
+
+
+      if (totalTime > t1 && !stormCenterUpdated) {
+        const r = stormRadius - stormRadius1;
+        const theta = Math.random() * 2 * Math.PI;
+        const radius = Math.random() * r;
+        stormCenter1 = {
+          x: originalCenter.x + radius * Math.cos(theta),
+          y: originalCenter.y + radius * Math.sin(theta)
+        };
+        stormCenterUpdated = true;
+        v1 = { x: (stormCenter1.x - originalCenter.x) / (t2 - t1), y: (stormCenter1.y - originalCenter.y) / (t2 - t1) };
+
+      }
+
+      if (totalTime > t3 && !stormCenterUpdated2) {
+        const r = stormRadius1 - stormRadius2;
+        const theta = Math.random() * 2 * Math.PI;
+        const radius = Math.random() * r;
+        stormCenter2 = {
+          x: stormCenter1.x + radius * Math.cos(theta),
+          y: stormCenter1.y + radius * Math.sin(theta)
+        };
+        stormCenterUpdated2 = true;
+
+      }
+
+
+      const m1 = (stormRadius1 - originalRadius) / (t2 - t1);
+      const m2 = (stormRadius2 - stormRadius1) / (t4 - t3);
+
+      if (totalTime > t1 && totalTime <= t2) {
+        //stormRadius = stormRadius1; //canvasWidth / 4;
+        stormRadius = m1 * (totalTime - t1) + originalRadius;
+        // Future: change stormCenter here if needed
+        stormCenter = { x: ((stormCenter1.x - originalCenter.x) / (t2 - t1)) * (totalTime - t1) + originalCenter.x, y: ((stormCenter1.y - originalCenter.y) / (t2 - t1)) * (totalTime - t1) + originalCenter.y };
+
+      } else if (totalTime > t2 && totalTime <= t3) {
+        stormRadius = stormRadius1;
+        //stormRadius = canvasWidth / 8;
+        // Future: change stormCenter here if needed
+        stormCenter = stormCenter1;
+      } else if (totalTime > t3 && totalTime <= t4) {
+
+        stormRadius = m2 * (totalTime - t3) + stormRadius1;
+        //stormRadius = canvasWidth / 8;
+        // Future: change stormCenter here if needed
+        stormCenter = { x: ((stormCenter2.x - stormCenter1.x) / (t4 - t3)) * (totalTime - t3) + stormCenter1.x, y: ((stormCenter2.y - stormCenter1.y) / (t4 - t3)) * (totalTime - t3) + stormCenter1.y };
+
+      } else if (totalTime > t4) {
+
+        stormRadius = stormRadius2;
+        //stormRadius = canvasWidth / 8;
+        // Future: change stormCenter here if needed
+        stormCenter = stormCenter2;
+      } else {
+        stormRadius = canvasWidth / 2.275;
+      }
+
+      stormCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+      stormCtx.save();
+      stormCtx.fillStyle = `rgba(255, 0, 0, ${stormOpacity})`;
+      stormCtx.beginPath();
+      stormCtx.rect(0, 0, canvasWidth, canvasHeight);
+      stormCtx.arc(stormCenter.x, stormCenter.y, stormRadius, 0, Math.PI * 2, true);
+      stormCtx.closePath();
+      stormCtx.fill('evenodd');
+      stormCtx.restore();
+
+      if (totalTime > t1 && totalTime <= t3) {
+        stormCtx.beginPath();
+        stormCtx.arc(stormCenter1.x, stormCenter1.y, stormRadius1, 0, Math.PI * 2);
+        stormCtx.strokeStyle = 'white';
+        stormCtx.lineWidth = 2; // You can adjust thickness here
+        stormCtx.stroke();
+      } else if (totalTime > t3) {//&& totalTime <= t4
+        stormCtx.beginPath();
+        stormCtx.arc(stormCenter2.x, stormCenter2.y, stormRadius2, 0, Math.PI * 2);
+        stormCtx.strokeStyle = 'white';
+        stormCtx.lineWidth = 2; // You can adjust thickness here
+        stormCtx.stroke();
+
+      }
+
+
+    }
+
+
+
+    function calculateDistance(a, b) {
+      const dx = b.x - a.x;
+      const dy = b.y - a.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function animatePath(start, end, callback) {
+      const steps = 50;
+      let currentStep = 0;
+
+      function drawSegment() {
+        if (currentStep > steps) {
+          callback();
+          return;
+        }
+
+        const progress = currentStep / steps;
+        const x = start.x + (end.x - start.x) * progress;
+        const y = start.y + (end.y - start.y) * progress;
+
+        ctx.beginPath();
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'greenyellow';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        currentStep++;
+        requestAnimationFrame(drawSegment);
+      }
+
+      drawSegment();
+    }
+
+    function drawFullPath() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (visited.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(visited[0].x, visited[0].y);
+      for (let i = 1; i < visited.length; i++) {
+        ctx.lineTo(visited[i].x, visited[i].y);
+      }
+      ctx.strokeStyle = 'greenyellow';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    const regionRunes = {
+      'Region 1': 16412,
+      'Region 2': 7200,
+      'Region 3': 18240,
+      'Region 4': 18240,
+      'Region 5': 18240,
+      'Region 6': 18240,
+      'Region 7': 7200,
+      'Region 8': 16412,
+      'Region 9': 18240,
+      'Region 10': 7200,
+      'Region 11': 267500,
+      'Region 12': 18240,
+      'Region 13': 18240,
+      'Region 14': 7200,
+      'Region 15': 18240,
+      'Region 16': 16412,
+      'Region 17': 18240,
+      'Region 18': 0,
+      'Region 19': 0,
+      'Region 20': 0,
+      'Region 21': 0,
+      'Region 22': 0,
+      'Region 23': 22296,
+      'Region 24': 22296,
+      'Region 25': 22296,
+      'Region 26': 22296,
+      'Region 27': 22296,
+      'Region 28': 22296,
+      'Region 29': 22296,
+      'Region 30': 11840,
+      'Region 31': 11840,
+      'Region 32': 11840,
+      'Region 33': 11840,
+      'Region 34': 11840,
+      'Region 35': 11840,
+      'Region 36': 0,
+      'Region 37': 0,
+      'Region 38': 0,
+      'Region 39': 0,
+      'Region 40': 0,
+      'Region 41': 0,
+      'Region 42': 0,
+      'Region 43': 0,
+      'Region 44': 0,
+      'Region 45': 0,
+      'Region 46': 0,
+      'Region 47': 0,
+      'Region 48': 0,
+      'Region 49': 0,
+      'Region 50': 0,
+      'Region 51': 0,
+      'Region 52': 0,
+      'Region 53': 0,
+      'Region 54': 0,
+
+
+    };
+
+    const regionVisitDurations = {
+      'Region 1': 1.,
+      'Region 2': 1.,
+      'Region 3': 1.,
+      'Region 4': 1.,
+      'Region 5': 1.,
+      'Region 6': 1.,
+      'Region 7': 1.5,
+      'Region 8': 1.,
+      'Region 9': 1.,
+      'Region 10': 1.5,
+      'Region 11': 9.18333,
+      'Region 12': 1.,
+      'Region 13': 1.,
+      'Region 14': 1.,
+      'Region 15': 1.,
+      'Region 16': 1.,
+      'Region 17': 1.,
+      'Region 18': 0,
+      'Region 19': 0,
+      'Region 20': 0,
+      'Region 21': 0,
+      'Region 22': 0,
+      'Region 23': 1.,
+      'Region 24': 1.,
+      'Region 25': 1.,
+      'Region 26': 1.,
+      'Region 27': 1.,
+      'Region 28': 1.,
+      'Region 29': 1.,
+      'Region 30': 1.58333,
+      'Region 31': 1.58333,
+      'Region 32': 1.58333,
+      'Region 33': 1.58333,
+      'Region 34': 1.58333,
+      'Region 35': 1.58333,
+      'Region 36': 0,
+      'Region 37': 0,
+      'Region 38': 0,
+      'Region 39': 0,
+      'Region 40': 0,
+      'Region 41': 0,
+      'Region 42': 0,
+      'Region 43': 0,
+      'Region 44': 0,
+      'Region 45': 0,
+      'Region 46': 0,
+      'Region 47': 0,
+      'Region 48': 0,
+      'Region 49': 0,
+      'Region 50': 0,
+      'Region 51': 0,
+      'Region 52': 0,
+      'Region 53': 0,
+      'Region 54': 0
+    };
+
+    regions.forEach(region => {
+      region.addEventListener('click', () => {
+        const name = region.dataset.name;
+
+        const rect = region.getBoundingClientRect();
+        const containerRect = document.getElementById('mapContainer').getBoundingClientRect();
+        const x = rect.left - containerRect.left + rect.width / 2;
+        const y = rect.top - containerRect.top + rect.height / 2;
+        const currentPoint = { x, y };
+
+        const li = document.createElement('li');
+        li.textContent = name;
+        regionList.appendChild(li);
+
+        if (!visitedNames.has(name)) {
+          totalPoints += regionRunes[name];//1000;
+          totalTime += regionVisitDurations[name] || 0;
+          visitedNames.add(name);
+
+          if (totalPoints >= 3698 && totalPoints < 11620) {
+            level = 2;
+          } else if (totalPoints >= 11620 && totalPoints < 23968) {
+            level = 3;
+          } else if (totalPoints >= 23968 && totalPoints < 40946) {
+            level = 4;
+          } else if (totalPoints >= 40946 && totalPoints < 62764) {
+            level = 5;
+          } else if (totalPoints >= 62764 && totalPoints < 89633) {
+            level = 6;
+          } else if (totalPoints >= 89633 && totalPoints < 121770) {
+            level = 7;
+          } else if (totalPoints >= 121770 && totalPoints < 159394) {
+            level = 8;
+          } else if (totalPoints >= 159394 && totalPoints < 202729) {
+            level = 9;
+          } else if (totalPoints >= 202729 && totalPoints < 252000) {
+            level = 10;
+          } else if (totalPoints >= 252000 && totalPoints < 307439) {
+            level = 11;
+          } else if (totalPoints >= 307439 && totalPoints < 369279) {
+            level = 12;
+          } else if (totalPoints >= 369279 && totalPoints < 437758) {
+            level = 13;
+          } else if (totalPoints >= 437758 && totalPoints < 513116) {
+            level = 14;
+          } else if (totalPoints >= 513116) {
+            level = 15;
+          }
+
+
+          pointsDisplay.textContent = `Points: ${totalPoints}`;
+          timeDisplay.textContent = `Time: ${totalTime} min`;
+          levelDisplay.textContent = `Level: ${level}`;
+        }
+
+        if (visited.length > 0) {
+          const last = visited[visited.length - 1];
+          const dist = calculateDistance(last, currentPoint);
+          totalTime += dist * vp;//Math.ceil(dist * vp);
+          //timeDisplay.textContent = `Time: ${totalTime} min`;
+          timeDisplay.textContent = `Time: ${totalTime.toFixed(2)} min`;
+          animatePath(last, currentPoint, () => {
+            visited.push(currentPoint);
+            drawFullPath();
+          });
+        } else {
+          visited.push(currentPoint);
+          drawFullPath();
+        }
+
+        drawStormOverlay();
+      });
+    });
+
+    // Initial storm overlay
+    drawStormOverlay();
+  </script>
+</body>
+
+</html>
